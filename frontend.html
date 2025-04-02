@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Predictor</title>
+    <style>
+        /* Global Styles */
+        body {
+            background: url('https://images.unsplash.com/photo-1596495577886-5a85f3f6e47b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwyMDg3MnwwfDF8c2VhcmNofDgxfHxsaWZlfGVufDB8fHx8fDE2ODg0NDAwMjM&ixlib=rb-1.2.1&q=80&w=1080') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Card Container */
+        .container {
+            max-width: 600px;
+            background: rgba(255, 248, 240, 0.8); /* Transparent background */
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* Headings */
+        h2 {
+            color: #d32f2f;
+            font-weight: 700;
+        }
+
+        /* Form Styling */
+        .form-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #d32f2f;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Input Focus Effect */
+        input:focus, select:focus {
+            border-color: #ff6f61;
+            box-shadow: 0 0 8px rgba(255, 111, 97, 0.4);
+            outline: none;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(to right, #d32f2f, #ff6f61);
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #ff6f61, #d32f2f);
+            transform: scale(1.05);
+        }
+
+        /* Results Section */
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 2px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #d32f2f;
+            color: white;
+        }
+
+        td {
+            background: #fff3e0;
+        }
+
+        /* Hover Effect for Table */
+        tr:hover {
+            background: rgba(211, 47, 47, 0.1);
+        }
+
+        /* Fade-In Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center">Medicine Prediction</h2>
+    
+    <form id="medicineForm">
+        <div class="mb-3">
+            <label for="symptoms" class="form-label">Enter Symptoms:</label>
+            <input type="text" class="form-control" id="symptoms" placeholder="e.g., Fever, Cough">
+        </div>
+
+        <div class="mb-3">
+            <label for="age" class="form-label">Enter Age:</label>
+            <input type="number" class="form-control" id="age" placeholder="e.g., 25" min="1">
+        </div>
+        
+        <div class="mb-3">
+            <label for="history" class="form-label">Medical History:</label>
+            <select class="form-select" id="history">
+                <option value="None">No Medical History</option>
+                <option value="Diabetes">Diabetes</option>
+                <option value="Hypertension">Hypertension</option>
+                <option value="Asthma">Asthma</option>
+                <option value="Heart Disease">Heart Disease</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="getRecommendation()">Find the Right Medicine</button>
+
+        <p class="result text-center" id="result"></p>
+    </form>
+</div>
+
+<script>
+    async function getRecommendation() {
+        let symptoms = document.getElementById("symptoms").value.trim();
+        let age = document.getElementById("age").value;
+        let history = document.getElementById("history").value;
+        let result = document.getElementById("result");
+
+        if (symptoms === "" || age === "") {
+            result.innerHTML = "❌ Please fill in all fields.";
+            result.style.color = "red";
+            return;
+        }
+
+        let response = await fetch(`http://127.0.0.1:5000/predict?symptom=${symptoms}&age=${age}&history=${history}`);
+        let data = await response.json();
+
+        if (data.medicines) {
+            let output = `<strong>Recommended Medicines:</strong><br>`;
+            data.medicines.forEach((med, index) => {
+                output += `✅ ${med} (Formula: ${data.formulas[index]})<br>`;
+            });
+            result.innerHTML = output;
+            result.style.color = "#d32f2f";
+        } else {
+            result.innerHTML = "❌ No suitable medicine found.";
+            result.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
