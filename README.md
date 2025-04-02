@@ -20,17 +20,7 @@ Simple and user-friendly interface
 - **Backend:**  Flask  
 - **Database:** Sqlite3
   
----
-## How to Run
 
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/Jahnavi-2723/PREDICTION-OF-MEDICINE-BY-SYMPTOMS.git
-2. Navigate to the project folder:
-   ```bash
-   cd PREDICTION-OF-MEDICINE-BY-SYMPTOMS
-3. Open index.html in your browser.
----
 
 ## Screenshot
 
